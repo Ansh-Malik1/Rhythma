@@ -1,0 +1,11 @@
+Backup saved to: backups/heart_failure_patients_before_cleaning_20251105_200639.csv
+Operation/s applied on columns: Index(['row_id_x', 'subject_id_x', 'hadm_id', 'admittime', 'dischtime',
+       'deathtime', 'admission_type', 'admission_location',
+       'discharge_location', 'insurance', 'language', 'religion',
+       'marital_status', 'ethnicity', 'edregtime', 'edouttime', 'diagnosis',
+       'hospital_expire_flag', 'has_chartevents_data', 'readmission_30days',
+       'row_id_y', 'subject_id_y', 'seq_num', 'icd9_code'],
+      dtype='object')
+Filled missing numeric values using 'mean' strategy.
+Cleaned data saved to cleaned.csv
+Original shape : (14040, 24), Final shape : (14040, 24)
