@@ -29,8 +29,7 @@ pip-wheel-metadata/
 
 
 # Data & Outputs
-data/
-datasets/
+**/raw/
 *.csv
 *.tsv
 *.xlsx
