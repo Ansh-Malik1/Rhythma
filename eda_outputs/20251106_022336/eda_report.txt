@@ -1,0 +1,167 @@
+# Basic Dataset Summary for: cleaned_new.csv
+============================================================
+
+Shape: 1649 rows x 14 columns
+
+Column Info:
+admission_type           object
+admission_location       object
+discharge_location       object
+insurance                object
+diagnosis                object
+hospital_expire_flag      int64
+has_chartevents_data      int64
+gender                   object
+age                     float64
+lab_mean                float64
+lab_min                 float64
+lab_max                 float64
+lab_std                 float64
+readmission_30days        int64
+
+Missing Values:
+No missing values found.
+
+Unique Values:
+admission_type: 3 unique
+admission_location: 6 unique
+discharge_location: 16 unique
+insurance: 5 unique
+diagnosis: 641 unique
+hospital_expire_flag: 2 unique
+has_chartevents_data: 2 unique
+gender: 2 unique
+age: 1387 unique
+lab_mean: 1637 unique
+lab_min: 75 unique
+lab_max: 1289 unique
+lab_std: 1637 unique
+readmission_30days: 2 unique
+
+Duplicate Rows: 0
+
+Descriptive Statistics (Numerical Columns):
+
+Column: hospital_expire_flag
+  Count : 1649
+  Mean  : 0.12
+  Std   : 0.33
+  Min   : 0.0
+  25%   : 0.0
+  Median: 0.0
+  75%   : 0.0
+  Max   : 1.0
+
+Column: has_chartevents_data
+  Count : 1649
+  Mean  : 0.99
+  Std   : 0.1
+  Min   : 0.0
+  25%   : 1.0
+  Median: 1.0
+  75%   : 1.0
+  Max   : 1.0
+
+Column: age
+  Count : 1649
+  Mean  : 70.48
+  Std   : 12.55
+  Min   : 19.16
+  25%   : 63.82
+  Median: 72.89
+  75%   : 79.62
+  Max   : 88.97
+
+Column: lab_mean
+  Count : 1649
+  Mean  : 79.91
+  Std   : 72.01
+  Min   : 30.56
+  25%   : 47.41
+  Median: 55.73
+  75%   : 78.16
+  Max   : 871.41
+
+Column: lab_min
+  Count : 1649
+  Mean  : -2.24
+  Std   : 4.3
+  Min   : -44.0
+  25%   : -3.0
+  Median: 0.0
+  75%   : 0.0
+  Max   : 1.8
+
+Column: lab_max
+  Count : 1649
+  Mean  : 7802.01
+  Std   : 18654.59
+  Min   : 141.0
+  25%   : 528.0
+  Median: 1280.0
+  75%   : 7857.0
+  Max   : 279667.0
+
+Column: lab_std
+  Count : 1649
+  Mean  : 477.26
+  Std   : 926.15
+  Min   : 40.99
+  25%   : 72.24
+  Median: 114.06
+  75%   : 461.94
+  Max   : 11027.23
+
+Column: readmission_30days
+  Count : 1649
+  Mean  : 0.12
+  Std   : 0.32
+  Min   : 0.0
+  25%   : 0.0
+  Median: 0.0
+  75%   : 0.0
+  Max   : 1.0
+============================================================
+
+--- Target Insights: 'readmission_30days' ---
+Target is numeric.
+Mean: 0.1183
+Median: 0.0
+Std Deviation: 0.323
+Min: 0, Max: 1
+
+=== Graphs Generated ===
+Distribution graph saved: eda_outputs\20251106_022336\graphs\distribution_hospital_expire_flag.png
+Distribution graph saved: eda_outputs\20251106_022336\graphs\distribution_has_chartevents_data.png
+Distribution graph saved: eda_outputs\20251106_022336\graphs\distribution_age.png
+Distribution graph saved: eda_outputs\20251106_022336\graphs\distribution_lab_mean.png
+Distribution graph saved: eda_outputs\20251106_022336\graphs\distribution_lab_min.png
+Distribution graph saved: eda_outputs\20251106_022336\graphs\distribution_lab_max.png
+Distribution graph saved: eda_outputs\20251106_022336\graphs\distribution_lab_std.png
+Distribution graph saved: eda_outputs\20251106_022336\graphs\distribution_readmission_30days.png
+Count plot saved: eda_outputs\20251106_022336\graphs\countplot_admission_type.png
+Count plot saved: eda_outputs\20251106_022336\graphs\countplot_admission_location.png
+Count plot saved: eda_outputs\20251106_022336\graphs\countplot_discharge_location.png
+Count plot saved: eda_outputs\20251106_022336\graphs\countplot_insurance.png
+Count plot saved: eda_outputs\20251106_022336\graphs\countplot_diagnosis.png
+
+Correlation heatmap saved to eda_outputs\20251106_022336\graphs\correlation_heatmap.png
+
+=== Automatic Warnings ===
+No red flags detected.
+==========================
+
+Target-specific Insights
+Target 'readmission_30days' is numeric.
+IQR-based Outlier Detection:
+- Lower Bound: 0.00
+- Upper Bound: 0.00
+- Outliers detected: 195 / 1649 (11.83%)
+
+Feature Variance
+→ Variance calculated for 8 numerical features.
+1 features have low variance (< 0.1):
+has_chartevents_data
+
+= SUGGESTIONS & NEXT STEPS ===
+- Consider imputing missing values.
