@@ -1,8 +1,0 @@
-PCA Summary
-Input File: scaled.csv
-Output File: dataset/processed/final_data.csv
-Timestamp: 20251105_222440
-Original Shape: (14040, 12)
-Numeric Columns Used: ['hospital_expire_flag', 'has_chartevents_data', 'length_of_stay', 'admit_hour', 'admit_weekday', 'admit_month', 'ed_duration']
-Number of Components: 5
-Explained Variance Ratio: [0.15798753052723644, 0.15581474784500368, 0.14393052149020288, 0.14210581910272538, 0.13673747826330518]

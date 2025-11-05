@@ -1,0 +1,9 @@
+Backup saved to: backups/cleaned_new_before_encoding_20251106_023315.csv
+Label encoded column: admission_type
+Label encoded column: admission_location
+Label encoded column: discharge_location
+Label encoded column: insurance
+Label encoded column: diagnosis
+Label encoded column: gender
+Encoded data saved to encoded_new.csv
+Original shape: (1649, 14), Final shape: (1649, 14)
