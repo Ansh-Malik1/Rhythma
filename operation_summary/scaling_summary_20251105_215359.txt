@@ -1,0 +1,4 @@
+Backup saved to: backups/date_time_fixed_before_cleaning_20251105_215359.csv
+Applied standard scaling to columns: ['length_of_stay', 'admit_hour', 'admit_weekday', 'admit_month', 'ed_duration']
+Scaled data saved to scaled_output.csv
+Original shape: (14040, 25), Final shape: (14040, 25)
