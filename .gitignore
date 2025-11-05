@@ -1,0 +1,94 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.manifest
+*.spec
+
+
+# Virtual Environment
+venv/
+.env/
+env/
+.venv/
+pip-wheel-metadata/
+*.log
+
+
+# Jupyter & IPython
+.ipynb_checkpoints/
+*.ipynb_convert/
+*.nbconvert.ipynb
+
+
+# Data & Outputs
+data/
+datasets/
+*.csv
+*.tsv
+*.xlsx
+*.xls
+*.parquet
+*.feather
+*.json
+*.db
+*.sqlite
+*.pkl
+*.sav
+*.zip
+*.tar.gz
+
+
+
+# Reports & Results
+reports/
+outputs/
+results/
+figures/
+plots/
+eda_reports/
+*.html
+*.pdf
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Datamedic / Logs
+backups/
+summaries/
+*.bak
+*.tmp
+
+
+# Environment & Config
+*.env
+*.ini
+*.cfg
+*.yaml
+*.yml
+
+# Model Artifacts
+models/
+checkpoints/
+*.h5
+*.pt
+*.pth
+*.joblib
+*.onnx
+
+
+# Temporary Files
+*.tmp
+*.temp
+*.swp
+*.bak

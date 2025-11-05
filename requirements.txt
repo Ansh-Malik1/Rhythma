@@ -1,0 +1,19 @@
+# Core data handling
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Data visualization
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# Feature selection & PCA
+scipy>=1.11.0
+
+# For working with multiple CSVs
+pyarrow>=15.0.0
+
+# CLI preprocessing tool 
+datamedic>=0.1.0
+
+# Notebook / exploration
+jupyterlab>=4.0.0
