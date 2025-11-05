@@ -1,0 +1,4 @@
+Backup saved to: backups/cleaned_new_encoded_with_los_before_cleaning_20251106_041430.csv
+Applied standard scaling to columns: ['lab_mean', 'lab_min', 'lab_max', 'lab_std', 'age']
+Scaled data saved to scaled_new.csv
+Original shape: (1649, 15), Final shape: (1649, 15)
