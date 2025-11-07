@@ -8,6 +8,7 @@
 It leverages machine learning on clinical, demographic, and laboratory data to generate actionable insights for clinicians and healthcare administrators.
 
 Live Site Link (Use PC/Laptop to view the website) : https://rhythma.streamlit.app/
+Demo Video : https://www.loom.com/share/f2f3625aa09d4df2bd6882b99799d789
 
 ---
 
