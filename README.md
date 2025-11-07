@@ -11,6 +11,8 @@ Live Site Link (Use PC/Laptop to view the website) : https://rhythma.streamlit.a
 
 Demo Video : https://www.loom.com/share/f2f3625aa09d4df2bd6882b99799d789
 
+Documentation: https://drive.google.com/file/d/1DBSKJEF09_zXLQzx2kbrCYkH4BUZAJQC/view?usp=sharing
+
 ---
 
 ## Table of Contents
