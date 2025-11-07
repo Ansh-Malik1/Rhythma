@@ -699,7 +699,7 @@ with tab1:
     with col1:
         plot_df = sample_for_plot(df_pre)
         fig1, ax1 = plt.subplots(figsize=(6, 4))
-        sns.violinplot(x=plot_df["severity"].astype(int), y=plot_df["readmission_probability"], palette="crest", ax=ax1, inner=None)
+        sns.violinplot(x=plot_df["severity"].astype(int), y=plot_df["readmission_probability"], palette="crest", ax=ax1, inner=None,legend=False,hue="severity")
         sns.boxplot(x=plot_df["severity"].astype(int), y=plot_df["readmission_probability"], width=0.18, showcaps=True, boxprops={"facecolor": "white"}, showfliers=False, ax=ax1)
         sns.stripplot(x=plot_df["severity"].astype(int), y=plot_df["readmission_probability"], color="black", alpha=0.35, size=2, jitter=0.25, ax=ax1)
         means = plot_df.groupby("severity", observed=True)["readmission_probability"].mean().reindex(sorted(plot_df["severity"].unique()))
