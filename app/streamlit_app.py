@@ -709,7 +709,8 @@ with tab1:
         ax1.set_xlabel("Severity Level")
         ax1.set_ylabel("Predicted Readmission Probability")
         ax1.grid(axis="y", linestyle="--", alpha=0.3)
-        fig1.tight_layout()
+        fig1.tight_layout(rect=[0, 0, 1, 0.95])
+        plt.subplots_adjust(left=0.12, right=0.95, top=0.9, bottom=0.12)
         st.pyplot(fig1)
 
 
