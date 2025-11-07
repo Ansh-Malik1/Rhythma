@@ -4,21 +4,14 @@ import zipfile
 from datetime import datetime
 from io import BytesIO
 import joblib
-import lightgbm as lgb
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import streamlit as st
-from fpdf import FPDF
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from PIL import Image
-from sklearn.metrics import roc_auc_score
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
 import tempfile, csv, math
 from collections import defaultdict
 import zipfile
+import matplotlib.pyplot as plt
 
 Image.MAX_IMAGE_PIXELS = 1000000000
 
@@ -28,7 +21,13 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
+@st.cache_data(show_spinner=True)
+def process_and_enforce_schema(file_bytes, is_zip):
+    if is_zip:
+        df_pre = process_readmission_zip(file_bytes)
+    else:
+        df_pre = safe_read_csv(file_bytes)
+    return enforce_final_schema(df_pre)
 
 LIGHT_CSS = """
 <style>
@@ -140,7 +139,7 @@ CATEGORICAL_COLS = [
     "hospital_expire_flag", "has_chartevents_data", "gender", "severity"
 ]
 
-PLOT_SAMPLE_MAX = 5000
+PLOT_SAMPLE_MAX = 2000
 
 
 
@@ -515,7 +514,7 @@ if uploaded is None:
         for j, (title, desc) in enumerate(benefits[i:i+3]):
             with cols[j]:
                 st.markdown(f"""
-                <div style='background-color:#f0f9ff; border:1px solid #d0ebf7; padding:25px; border-radius:12px; margin:10px; min-height:160px;'>
+                <div style='background-color:#f0f9ff; border:1px solid #d0ebf7; padding:25px; border-radius:12px; margin:10px; min-height:200px;'>
                     <h4 style='color:#003049;'>{title}</h4>
                     <p style='color:#1a1a1a;'>{desc}</p>
                 </div>
@@ -584,16 +583,17 @@ if uploaded is None:
 try:
     file_bytes = uploaded.read()
     is_zip = uploaded.name.lower().endswith(".zip")
-    if is_zip:
-        st.info("Extracting and processing ZIP file...")
-        df_pre = process_readmission_zip(file_bytes)
-    else:
-        df_pre = safe_read_csv(file_bytes)
+    df_pre = process_and_enforce_schema(file_bytes, is_zip)
 except Exception as e:
     st.error(f"Failed to load uploaded file: {e}")
     st.stop()
 
-
+import lightgbm as lgb
+import seaborn as sns
+from fpdf import FPDF
+from sklearn.preprocessing import LabelEncoder, StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import roc_auc_score
 if "synthetic_flag" in df_pre.columns:
     df_pre = df_pre.drop(columns=["synthetic_flag"], errors="ignore")
 
@@ -613,7 +613,7 @@ if encoders is None or scaler is None:
 
 
 df_proc, encoders, scaler = apply_preprocessors(df_pre, encoders, scaler)
-st.write(f"✅ Preprocessed shape: {df_proc.shape}")
+st.write(f" Preprocessed shape: {df_proc.shape}")
 
 model = load_lgb_model()
 if model is None:
@@ -680,7 +680,8 @@ csv_bytes = df_pre.to_csv(index=False).encode("utf-8")
 st.download_button("Download predictions CSV", data=csv_bytes, file_name="rhythma_predictions.csv", mime="text/csv")
 
 
-
+if len(df_pre) > 10000:
+    df_pre = df_pre.sample(10000, random_state=42)
 st.markdown("---")
 st.markdown("##  Advanced Insights Dashboard")
 
@@ -692,39 +693,78 @@ tab1, tab2, tab3 = st.tabs(["Overview", "Risk Segmentation", "Feature Impact"])
 
 
 with tab1:
-    st.subheader("Key Distribution Trends")
     col1, col2 = st.columns(2)
 
 
     with col1:
+        st.subheader("Avg Readmission Probability by Severity")
+
         plot_df = sample_for_plot(df_pre)
-        fig1, ax1 = plt.subplots(figsize=(6, 4))
-        sns.violinplot(x=plot_df["severity"].astype(int), y=plot_df["readmission_probability"], palette="crest", ax=ax1, inner=None,legend=False,hue="severity")
-        sns.boxplot(x=plot_df["severity"].astype(int), y=plot_df["readmission_probability"], width=0.18, showcaps=True, boxprops={"facecolor": "white"}, showfliers=False, ax=ax1)
-        sns.stripplot(x=plot_df["severity"].astype(int), y=plot_df["readmission_probability"], color="black", alpha=0.35, size=2, jitter=0.25, ax=ax1)
-        means = plot_df.groupby("severity", observed=True)["readmission_probability"].mean().reindex(sorted(plot_df["severity"].unique()))
-        for i, (sev, m) in enumerate(means.items()):
-            ax1.text(i, m + 0.01, f"{m:.3f}", ha="center", color="#003049", fontsize=9)
-        ax1.set_title("Readmission Probability by Severity")
+
+        # Clean severity column
+        plot_df["severity"] = pd.to_numeric(plot_df["severity"], errors="coerce").fillna(0).astype(int)
+        severity_summary = (
+            plot_df.groupby("severity", observed=True)["readmission_probability"]
+            .agg(["mean", "count"])
+            .reset_index()
+            .sort_values("severity")
+        )
+
+        fig1, ax1 = plt.subplots(figsize=(5.5, 3.8))
+        sns.barplot(
+            data=severity_summary,
+            x="severity",
+            y="mean",
+            palette="Blues",
+            ax=ax1,
+            edgecolor="black"
+        )
+
+        # Add value labels
+        for i, row in severity_summary.iterrows():
+            ax1.text(i, row["mean"] + 0.002, f"{row['mean']:.3f}", ha="center", color="#003049", fontsize=9)
+
+        ax1.set_title("Average Readmission Probability by Severity", fontsize=12, pad=8)
         ax1.set_xlabel("Severity Level")
-        ax1.set_ylabel("Predicted Readmission Probability")
-        ax1.grid(axis="y", linestyle="--", alpha=0.3)
-        fig1.tight_layout(rect=[0, 0, 1, 0.95])
-        plt.subplots_adjust(left=0.12, right=0.95, top=0.9, bottom=0.12)
+        ax1.set_ylabel("Mean Readmission Probability")
+        ax1.grid(axis="y", linestyle="--", alpha=0.4)
+        fig1.tight_layout()
         st.pyplot(fig1)
 
-
     with col2:
-        grp = cached_groupby_sum(df_bytes, "age", "readmission_probability")
-        fig2, ax2 = plt.subplots(figsize=(6, 4))
-        sns.lineplot(x="age", y="readmission_probability", data=grp, linewidth=2, ax=ax2)
-        sns.scatterplot(x="age", y="readmission_probability", data=grp, alpha=0.6, ax=ax2)
-        ax2.set_title("Expected Readmissions by Age")
-        ax2.set_xlabel("Age")
+        st.subheader("Expected Readmissions by Age Group")
+
+        # Bin ages into cohorts for smoother trend
+        df_pre["age_group"] = pd.cut(
+            df_pre["age"],
+            bins=[0, 30, 50, 70, 90, 120],
+            labels=["<30", "30–50", "50–70", "70–90", "90+"],
+            include_lowest=True
+        )
+
+        age_grp = (
+            df_pre.groupby("age_group", observed=True)["readmission_probability"]
+            .sum()
+            .reset_index()
+        )
+
+        fig2, ax2 = plt.subplots(figsize=(5.5, 3.8))
+        sns.barplot(
+            data=age_grp,
+            x="age_group",
+            y="readmission_probability",
+            palette="crest",
+            ax=ax2,
+            edgecolor="black"
+        )
+
+        ax2.set_title("Expected Readmissions by Age Group", fontsize=12, pad=8)
+        ax2.set_xlabel("Age Group")
         ax2.set_ylabel("Expected Readmissions")
-        ax2.grid(axis="y", linestyle="--", alpha=0.3)
+        ax2.grid(axis="y", linestyle="--", alpha=0.4)
         fig2.tight_layout()
         st.pyplot(fig2)
+
 
     avg_prob = df_pre["readmission_probability"].mean()
     high_risk_pct = df_pre["predicted_readmission"].mean() * 100
@@ -752,30 +792,7 @@ with tab2:
 
     col1, col2 = st.columns(2)
  
-    with col2:
-        avg_insurance = (
-            df_pre.groupby("insurance", observed=True)["readmission_probability"]
-            .mean()
-            .reset_index()
-            .sort_values("readmission_probability", ascending=False)
-            .head(10)
-        )
-
-        fig5, ax5 = plt.subplots(figsize=(6, 4))
-        sns.barplot(
-            x="insurance",
-            y="readmission_probability",
-            data=avg_insurance,
-            palette="Blues",
-            ax=ax5
-        )
-        ax5.set_title("Average Readmission Probability by Top 10 Insurance Types", fontsize=12)
-        ax5.set_xlabel("Insurance Type")
-        ax5.set_ylabel("Readmission Probability")
-        ax5.tick_params(axis="x", rotation=45)
-        fig5.tight_layout()
-        st.pyplot(fig5)
-
+   
     st.markdown("#### Top 10 At-Risk Patients")
     top_risk = df_pre.nlargest(10, "readmission_probability")[["age", "severity", "readmission_probability"]]
     st.dataframe(top_risk.style.format({"readmission_probability": "{:.3f}"}))
