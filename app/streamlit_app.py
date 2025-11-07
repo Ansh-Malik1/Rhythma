@@ -716,11 +716,12 @@ with tab1:
             x="severity",
             y="mean",
             palette="Blues",
+            hue="severity",
             ax=ax1,
-            edgecolor="black"
+            edgecolor="black",
+            legend=False
         )
 
-        # Add value labels
         for i, row in severity_summary.iterrows():
             ax1.text(i, row["mean"] + 0.002, f"{row['mean']:.3f}", ha="center", color="#003049", fontsize=9)
 
@@ -830,27 +831,29 @@ fig_fi.tight_layout()
 st.pyplot(fig_fi)
 
 
+all_figs = []
 
+for var_name in ["fig1", "fig2", "fig3", "fig6", "fig_fi"]:
+    if var_name in locals() and isinstance(locals()[var_name], plt.Figure):
+        all_figs.append(locals()[var_name])
+
+st.session_state["rhythma_figs"] = all_figs  
 st.markdown("### Generate PDF report")
 
 def collect_and_save_figs_for_pdf():
-
-    figs_to_include = []
-
-    for candidate in ["fig1", "fig2", "fig3", "fig6", "fig_fi"]:
-        obj = locals().get(candidate)
-        if isinstance(obj, plt.Figure):
-            figs_to_include.append(obj)
+    saved_paths = []
+    figs_to_include = st.session_state.get("rhythma_figs", [])
 
     if not figs_to_include:
-        figs_to_include.append(plt.gcf())
+        st.warning("No figures found to include in the PDF. Please run the analysis first.")
+        return []
 
-    saved_paths = []
     for i, fig in enumerate(figs_to_include):
         path = os.path.join(ROOT, f"tmp_plot_{i}.png")
         safe_savefig(fig, path, dpi=120)
         saved_paths.append(path)
     return saved_paths
+
 
 if st.button("Generate PDF report"):
     with st.spinner("Generating PDF — optimizing images and packaging..."):
